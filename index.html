@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WEEK — Growth Agency</title>
+  <meta name="description" content="Week is a high-performance growth agency building custom landing pages, running paid ads, and managing social media for businesses that want to actually grow." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:       #f6f2eb;
+      --surface:  #ede9e1;
+      --card-bg:  #e6e2da;
+      --border:   rgba(10,8,5,0.09);
+      --accent:   #5a9200;
+      --accent-hi: #c8ff00;
+      --accent2:  #4a38cc;
+      --text:     #0d0b08;
+      --muted:    #8a8680;
+      --font-h:   'Syne', sans-serif;
+      --font-b:   'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-b); overflow: hidden; cursor: none; }
+
+    /* CURSOR */
+    #cursor { width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.2s,background 0.2s;mix-blend-mode:difference; }
+    #cursor-ring { width:36px;height:36px;border:1px solid rgba(200,255,0,0.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s,opacity 0.2s; }
+
+    /* LOADER */
+    #loader { position:fixed;inset:0;z-index:9000;background:#f6f2eb;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px; }
+    .loader-logo { font-family:var(--font-h);font-size:clamp(60px,10vw,120px);font-weight:800;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:1px rgba(10,8,5,0.12);position:relative;overflow:hidden; }
+    .loader-logo::after { content:'WEEK';position:absolute;inset:0;color:var(--text);-webkit-text-stroke:0;clip-path:inset(0 100% 0 0); }
+    .loader-logo.animate::after { animation:revealTxt 2.4s cubic-bezier(0.77,0,0.175,1) 0s forwards; }
+    @keyframes revealTxt { to { clip-path:inset(0 0% 0 0); } }
+    .loader-bar-wrap { width:200px;height:1px;background:rgba(10,8,5,0.1);position:relative;overflow:hidden; }
+    .loader-bar { position:absolute;left:-100%;top:0;width:100%;height:100%;background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+    .loader-logo.animate ~ .loader-bar-wrap .loader-bar { animation:scan 2.2s ease 0s forwards; }
+    @keyframes scan { 0%{left:-100%;opacity:1}70%{left:100%;opacity:1}100%{left:100%;opacity:0} }
+    .loader-counter { font-family:var(--font-h);font-size:11px;font-weight:600;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase; }
+
+    /* NAVBAR */
+    #navbar { position:fixed;top:0;left:0;right:0;z-index:800;padding:24px 56px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s,backdrop-filter 0.4s; }
+    .nav-logo { font-family:var(--font-h);font-size:22px;font-weight:800;letter-spacing:-0.03em;color:var(--text);text-decoration:none;z-index:801;position:relative; }
+    .nav-logo span { color:var(--accent); }
+    #hamburger { width:52px;height:52px;border-radius:50%;border:1px solid var(--border);background:rgba(10,8,5,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:none;z-index:801;position:relative;backdrop-filter:blur(10px);transition:border-color 0.3s,background 0.3s; }
+    #hamburger:hover { border-color:var(--accent);background:rgba(90,146,0,0.08); }
+    .hb-line { width:18px;height:1.5px;background:var(--text);border-radius:2px;transition:transform 0.4s cubic-bezier(0.77,0,0.175,1),opacity 0.3s,width 0.4s;transform-origin:center; }
+    .hb-line:nth-child(2) { width:12px; }
+    body.menu-open .hb-line:nth-child(1) { transform:translateY(7.5px) rotate(45deg);width:18px; }
+    body.menu-open .hb-line:nth-child(2) { opacity:0;transform:scaleX(0); }
+    body.menu-open .hb-line:nth-child(3) { transform:translateY(-7.5px) rotate(-45deg); }
+
+    /* MENU OVERLAY */
+    #menu-overlay { position:fixed;inset:0;z-index:700;pointer-events:none;background:#0d0b08;transform:scaleY(0);transform-origin:top center;transition:transform 0.8s cubic-bezier(0.77,0,0.175,1); }
+    body.menu-open #menu-overlay { transform:scaleY(1);pointer-events:all; }
+    .menu-inner { position:fixed;inset:0;z-index:750;display:flex;flex-direction:column;justify-content:center;padding:100px 80px 60px;pointer-events:none;opacity:0;transition:opacity 0.3s 0.3s; }
+    body.menu-open .menu-inner { opacity:1;pointer-events:all; }
+    .menu-nav { list-style:none;display:flex;flex-direction:column;gap:4px; }
+    .menu-nav li { overflow:hidden; }
+    .menu-nav a { display:block;font-family:var(--font-h);font-size:clamp(52px,7vw,96px);font-weight:800;letter-spacing:-0.04em;color:rgba(246,242,235,0.38);text-decoration:none;line-height:1.05;transform:translateY(110%);transition:transform 0.6s cubic-bezier(0.77,0,0.175,1);position:relative; }
+    .menu-nav a::after { content:attr(data-text);position:absolute;inset:0;color:#f6f2eb;clip-path:inset(0 100% 0 0);transition:clip-path 0.4s ease; }
+    .menu-nav a:hover::after { clip-path:inset(0 0% 0 0); }
+    body.menu-open .menu-nav a { transform:translateY(0); }
+    body.menu-open .menu-nav li:nth-child(1) a { transition-delay:0.35s; }
+    body.menu-open .menu-nav li:nth-child(2) a { transition-delay:0.42s; }
+    body.menu-open .menu-nav li:nth-child(3) a { transition-delay:0.49s; }
+    .menu-footer { margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between; }
+    .menu-tagline { font-size:12px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase; }
+    .menu-contact a { font-size:13px;color:var(--accent);text-decoration:none;letter-spacing:0.1em; }
+
+    /* HERO */
+    #hero { position:relative;height:100vh;display:flex;flex-direction:column;align-items:stretch;justify-content:center;overflow:hidden; }
+    #three-canvas { position:absolute;inset:0;width:100%;height:100%;z-index:0; }
+    #hero::after { content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 90% at 40% 50%,transparent 20%,rgba(246,242,235,0.45) 60%,rgba(246,242,235,0.97) 100%);z-index:1;pointer-events:none; }
+    .hero-content { position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 80px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center; }
+    .hero-left { display:flex;flex-direction:column;align-items:flex-start; }
+    .hero-right { display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-top:8px; }
+    .hero-eyebrow { font-size:11px;font-weight:500;letter-spacing:0.35em;text-transform:uppercase;color:var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(20px); }
+    .hero-eyebrow::before { content:'';width:28px;height:1px;background:currentColor;opacity:0.5; }
+    .hero-headline { font-family:var(--font-h);font-size:clamp(42px,4.8vw,78px);font-weight:800;letter-spacing:-0.04em;line-height:1.02;color:var(--text);margin-bottom:0;opacity:0;transform:translateY(30px);text-align:left; }
+    .hero-headline em { font-style:normal;color:transparent;background:linear-gradient(135deg,var(--accent) 0%,#6db800 50%,var(--accent2) 100%);-webkit-background-clip:text;background-clip:text; }
+    .hero-sub { font-size:16px;font-weight:300;color:rgba(13,11,8,0.5);margin:0 0 40px;line-height:1.8;opacity:0;transform:translateY(20px);text-align:left; }
+    .hero-cta { display:inline-flex;align-items:center;gap:12px;padding:16px 36px;background:var(--text);color:var(--bg);font-family:var(--font-h);font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;border-radius:100px;cursor:none;opacity:0;transform:translateY(20px);transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden; }
+    .hero-cta::before { content:'';position:absolute;inset:0;background:rgba(0,0,0,0.12);transform:translateX(-101%);transition:transform 0.4s ease; }
+    .hero-cta:hover::before { transform:translateX(0); }
+    .hero-cta:hover { transform:translateY(-3px);box-shadow:0 20px 60px rgba(13,11,8,0.15); }
+    .cta-arrow { display:flex;align-items:center;justify-content:center;transition:transform 0.3s; }
+    .hero-cta:hover .cta-arrow { transform:translateX(4px); }
+    .hero-scroll-hint { position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0; }
+    .scroll-line { width:1px;height:56px;background:linear-gradient(to bottom,rgba(13,11,8,0.3),transparent);animation:scrollPulse 3s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:0.3}50%{opacity:1} }
+    .scroll-text { font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted); }
+
+    /* PAGE LAYOUT — hero sticky, cards rise */
+    #hero-wrapper { position:sticky;top:0;height:100vh;z-index:1; }
+    #cards-reveal-spacer { height:100vh;pointer-events:none; }
+    #cards-section { position:relative;z-index:10;background:var(--surface);transform:translateY(100vh);will-change:transform; }
+    #services, #free-offer, #outcomes, #pricing, #faq, #footer-cta { position:relative;z-index:11; }
+
+    /* CARDS */
+    .cards-section-inner { max-width:1280px;margin:0 auto;padding:0 80px; }
+    .cards-top-edge { height:60px;background:var(--surface);border-radius:56px 56px 0 0;position:relative;z-index:1; }
+    .cards-top-edge::before { content:'';position:absolute;top:20px;left:50%;transform:translateX(-50%);width:44px;height:3px;background:rgba(10,8,5,0.12);border-radius:2px; }
+    .cards-header { text-align:left;padding:56px 0 40px; }
+    .cards-tag { font-size:10px;font-weight:600;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);margin-bottom:20px; }
+    .cards-title { font-family:var(--font-h);font-size:clamp(34px,3.8vw,58px);font-weight:800;letter-spacing:-0.04em;color:var(--text);line-height:1.05; }
+    .cards-title span { color:var(--accent); }
+    .cards-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:0 0 80px; }
+    .service-card { background:var(--card-bg);padding:52px 48px;position:relative;overflow:hidden;cursor:none;transition:background 0.4s;border-radius:16px; }
+    .service-card::before { content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(90,146,0,0.06) 0%,transparent 60%);opacity:0;transition:opacity 0.4s;border-radius:16px; }
+    .service-card:hover::before { opacity:1; }
+    .service-card::after { content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:scaleX(0);transition:transform 0.5s cubic-bezier(0.77,0,0.175,1); }
+    .service-card:hover::after { transform:scaleX(1); }
+    .card-number { font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;color:var(--muted);margin-bottom:36px;text-transform:uppercase; }
+    .card-icon { width:44px;height:44px;margin-bottom:24px;display:flex;align-items:center;justify-content:center; }
+    .card-icon svg { width:100%;height:100%;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round; }
+    .card-title { font-family:var(--font-h);font-size:24px;font-weight:700;letter-spacing:-0.03em;color:var(--text);margin-bottom:14px;line-height:1.2; }
+    .card-desc { font-size:14px;font-weight:300;color:rgba(13,11,8,0.48);line-height:1.8;margin-bottom:32px; }
+    .card-delivers { border-top:1px solid var(--border);padding-top:26px; }
+    .card-delivers-label { font-size:9px;font-weight:600;letter-spacing:0.35em;text-transform:uppercase;color:var(--muted);margin-bottom:14px; }
+    .card-delivers ul { list-style:none;display:flex;flex-direction:column;gap:9px; }
+    .card-delivers li { font-size:13px;color:rgba(13,11,8,0.52);font-weight:300;padding-left:20px;position:relative;line-height:1.45; }
+    .card-delivers li::before { content:'→';position:absolute;left:0;color:var(--accent);font-size:11px; }
+
+    /* ── SECTION COMMONS ── */
+    .section-wrap { max-width:1280px;margin:0 auto;padding:0 80px; }
+    .section-tag { font-size:10px;font-weight:600;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);margin-bottom:20px; }
+    .section-headline { font-family:var(--font-h);font-size:clamp(36px,4vw,64px);font-weight:800;letter-spacing:-0.04em;line-height:1.05;color:var(--text); }
+    .section-headline em { font-style:normal;color:var(--accent); }
+
+    /* ── FREE OFFER ── */
+    #free-offer { background:var(--text);padding:120px 0; }
+    #free-offer .section-tag { color:var(--accent); }
+    #free-offer .section-headline { color:#f6f2eb; }
+    #free-offer .section-headline em { color:var(--accent); }
+    .offer-header { margin-bottom:72px; }
+    .offer-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:72px; }
+    .offer-card { background:rgba(255,255,255,0.04);padding:48px 40px;position:relative;transition:background 0.3s; }
+    .offer-card:first-child { border-radius:16px 0 0 16px; }
+    .offer-card:last-child  { border-radius:0 16px 16px 0; }
+    .offer-card:hover { background:rgba(255,255,255,0.07); }
+    .offer-time { font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;color:var(--accent);text-transform:uppercase;margin-bottom:20px; }
+    .offer-title { font-family:var(--font-h);font-size:22px;font-weight:700;color:#f6f2eb;margin-bottom:16px;letter-spacing:-0.02em; }
+    .offer-items { list-style:none;display:flex;flex-direction:column;gap:10px; }
+    .offer-items li { font-size:14px;color:rgba(246,242,235,0.5);font-weight:300;line-height:1.6;padding-left:18px;position:relative; }
+    .offer-items li::before { content:'→';position:absolute;left:0;color:var(--accent);font-size:11px; }
+    .offer-cta-block { text-align:center;padding-top:16px; }
+    .offer-cta-text { font-family:var(--font-h);font-size:clamp(18px,2vw,26px);color:#f6f2eb;margin-bottom:10px;font-weight:600;line-height:1.3; }
+    .offer-objection { font-size:13px;color:rgba(246,242,235,0.38);margin-bottom:40px;font-style:italic; }
+    .offer-btn { display:inline-flex;align-items:center;gap:12px;padding:18px 44px;background:var(--accent);color:#f6f2eb;font-family:var(--font-h);font-size:14px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;border-radius:100px;cursor:none;transition:transform 0.3s,box-shadow 0.3s; }
+    .offer-btn:hover { transform:translateY(-3px);box-shadow:0 20px 60px rgba(90,146,0,0.35); }
+
+    /* ── OUTCOMES ── */
+    #outcomes { background:var(--bg);padding:120px 0; }
+    .outcomes-header { margin-bottom:80px; }
+    .outcomes-timeline { display:grid;grid-template-columns:repeat(3,1fr);gap:56px;position:relative; }
+    .outcomes-timeline::before { content:'';position:absolute;top:27px;left:calc(33.33% - 20px);right:calc(33.33% - 20px);height:1px;background:var(--border);z-index:0; }
+    .timeline-marker { display:flex;align-items:center;gap:16px;margin-bottom:36px; }
+    .timeline-dot { width:54px;height:54px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:9px;font-weight:700;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;flex-shrink:0;position:relative;z-index:1; }
+    .timeline-label { font-family:var(--font-h);font-size:clamp(20px,2.2vw,30px);font-weight:800;letter-spacing:-0.03em;color:var(--text);line-height:1.1; }
+    .timeline-items { list-style:none;display:flex;flex-direction:column;gap:14px; }
+    .timeline-items li { font-size:14px;color:rgba(13,11,8,0.58);font-weight:300;line-height:1.6;padding-left:24px;position:relative; }
+    .timeline-items li::before { content:'✓';position:absolute;left:0;color:var(--accent);font-size:13px;font-weight:600; }
+
+    /* ── PRICING ── */
+    #pricing { background:var(--surface);padding:120px 0; }
+    .pricing-header { margin-bottom:72px; }
+    .pricing-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:16px; }
+    .pricing-card { background:var(--card-bg);padding:44px 36px;border-radius:16px;position:relative;transition:transform 0.35s,box-shadow 0.35s;cursor:none; }
+    .pricing-card.featured { background:var(--text); }
+    .pricing-card:hover { transform:translateY(-8px);box-shadow:0 28px 64px rgba(13,11,8,0.1); }
+    .pricing-card.featured:hover { box-shadow:0 28px 64px rgba(13,11,8,0.3); }
+    .pricing-tier { font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:16px; }
+    .pricing-card.featured .pricing-tier { color:rgba(246,242,235,0.45); }
+    .pricing-badge { display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;background:var(--accent);color:#f6f2eb;padding:4px 12px;border-radius:20px;margin-bottom:14px; }
+    .pricing-price { font-family:var(--font-h);font-size:clamp(26px,3vw,40px);font-weight:800;letter-spacing:-0.04em;color:var(--text);margin-bottom:4px;line-height:1; }
+    .pricing-card.featured .pricing-price { color:#f6f2eb; }
+    .pricing-cadence { font-size:12px;color:var(--muted);margin-bottom:28px; }
+    .pricing-card.featured .pricing-cadence { color:rgba(246,242,235,0.4); }
+    .pricing-divider { height:1px;background:var(--border);margin-bottom:24px; }
+    .pricing-card.featured .pricing-divider { background:rgba(246,242,235,0.08); }
+    .pricing-best { font-size:11px;color:var(--muted);font-style:italic;margin-bottom:20px; }
+    .pricing-card.featured .pricing-best { color:rgba(246,242,235,0.4); }
+    .pricing-features { list-style:none;display:flex;flex-direction:column;gap:10px; }
+    .pricing-features li { font-size:13px;color:rgba(13,11,8,0.52);font-weight:300;padding-left:18px;position:relative;line-height:1.45; }
+    .pricing-card.featured .pricing-features li { color:rgba(246,242,235,0.55); }
+    .pricing-features li::before { content:'→';position:absolute;left:0;color:var(--accent);font-size:11px; }
+
+    /* ── FAQ ── */
+    #faq { background:var(--bg);padding:120px 0; }
+    .faq-header { margin-bottom:72px; }
+    .faq-cols { display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start; }
+    .faq-list { display:flex;flex-direction:column; }
+    .faq-item { border-top:1px solid var(--border); }
+    .faq-item:last-child { border-bottom:1px solid var(--border); }
+    .faq-question { display:flex;align-items:center;justify-content:space-between;padding:26px 0;cursor:none;gap:24px;user-select:none; }
+    .faq-q-text { font-family:var(--font-h);font-size:clamp(15px,1.5vw,19px);font-weight:700;letter-spacing:-0.02em;color:var(--text);line-height:1.3; }
+    .faq-icon { width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.4s,background 0.3s,border-color 0.3s; }
+    .faq-icon svg { width:12px;height:12px;stroke:var(--text);transition:transform 0.4s cubic-bezier(0.77,0,0.175,1); }
+    .faq-item.open .faq-icon { background:var(--text);border-color:var(--text); }
+    .faq-item.open .faq-icon svg { stroke:#f6f2eb;transform:rotate(45deg); }
+    .faq-answer { max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.77,0,0.175,1); }
+    .faq-answer-inner { padding:0 48px 28px 0;font-size:14px;color:rgba(13,11,8,0.55);font-weight:300;line-height:1.85; }
+    .faq-item.open .faq-answer { max-height:240px; }
+
+    /* ── FOOTER CTA ── */
+    #footer-cta { background:var(--text);padding:120px 0;text-align:center; }
+    .footer-cta-tag { font-size:10px;font-weight:600;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);margin-bottom:24px; }
+    .footer-cta-headline { font-family:var(--font-h);font-size:clamp(36px,5vw,72px);font-weight:800;letter-spacing:-0.04em;color:#f6f2eb;line-height:1.02;margin-bottom:16px; }
+    .footer-cta-sub { font-size:16px;color:rgba(246,242,235,0.42);margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.8; }
+    .footer-meta { margin-top:80px;padding-top:40px;border-top:1px solid rgba(246,242,235,0.07);display:flex;align-items:center;justify-content:space-between; }
+    .footer-links { display:flex;gap:28px; }
+    .footer-links a { font-size:12px;color:rgba(246,242,235,0.3);text-decoration:none;letter-spacing:0.08em;transition:color 0.3s;cursor:none; }
+    .footer-links a:hover { color:rgba(246,242,235,0.65); }
+    .footer-copy { font-size:12px;color:rgba(246,242,235,0.2);letter-spacing:0.05em; }
+
+    /* ── SCROLL REVEAL BASE STATES ── */
+    .reveal      { opacity:0;transform:translateY(48px); }
+    .reveal-left { opacity:0;transform:translateX(-40px); }
+    .reveal-right{ opacity:0;transform:translateX(40px); }
+    .reveal-stagger > * { opacity:0;transform:translateY(36px); }
+
+    /* Noise */
+    body::before { content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:0.35; }
+  </style>
+</head>
+<body>
+  <!-- Early script: lock scroll + start counter immediately, no libs needed -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Trigger the logo reveal animation now (JS-controlled, not CSS auto-play)
+    document.querySelector('.loader-logo').classList.add('animate');
+    // Start counter — pure DOM, no GSAP/THREE dependency
+    var countEl = document.getElementById('loader-count');
+    var n = 0;
+    window.__loaderCounterDone = false;
+    var iv = setInterval(function() {
+      n = Math.min(n + Math.floor(Math.random()*5)+1, 100);
+      countEl.textContent = String(n).padStart(3,'0');
+      if (n >= 100) { clearInterval(iv); window.__loaderCounterDone = true; }
+    }, 100);
+  });
+  </script>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-logo">WEEK</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+    <div class="loader-counter" id="loader-count">000</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">W<span>.</span>EEK</a>
+    <button id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span class="hb-line"></span>
+      <span class="hb-line"></span>
+      <span class="hb-line"></span>
+    </button>
+  </nav>
+
+  <!-- MENU -->
+  <div id="menu-overlay"></div>
+  <div class="menu-inner">
+    <ul class="menu-nav">
+      <li><a href="#services" data-text="Services" id="mnav-services">Services</a></li>
+      <li><a href="about.html"    data-text="About"    id="mnav-about">About</a></li>
+      <li><a href="#roles"    data-text="Roles"    id="mnav-roles">Roles</a></li>
+    </ul>
+    <div class="menu-footer">
+      <p class="menu-tagline">Growth that actually shows up</p>
+      <div class="menu-contact"><a href="mailto:hello@week.agency">hello@week.agency</a></div>
+    </div>
+  </div>
+
+  <!-- PAGE -->
+  <div id="hero-wrapper">
+    <section id="hero">
+      <canvas id="three-canvas"></canvas>
+      <div class="hero-content">
+        <div class="hero-left">
+          <p class="hero-eyebrow" id="h-eyebrow">Growth Agency</p>
+          <h1 class="hero-headline" id="h-headline">
+            Your business is losing clients to
+            competitors who <em>actually</em>
+            show up online.
+          </h1>
+        </div>
+        <div class="hero-right">
+          <p class="hero-sub" id="h-sub">
+            Tired of vanity metrics? We build high-converting websites,
+            run paid ads, and manage your socials — so you get real
+            appointments, not just impressions.
+          </p>
+          <a href="#services" class="hero-cta" id="h-cta">
+            See our work
+            <span class="cta-arrow">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9h12M9 3l6 6-6 6"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="hero-scroll-hint" id="h-scroll">
+        <span class="scroll-text">Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="cards-reveal-spacer"></div>
+
+  <section id="services">
+    <div id="cards-section">
+      <div class="cards-top-edge"></div>
+      <div class="cards-section-inner">
+        <div class="cards-header">
+          <p class="cards-tag">What We Do</p>
+          <h2 class="cards-title">Four ways we help you <span>grow</span></h2>
+        </div>
+        <div class="cards-grid">
+
+        <div class="service-card" id="card-1">
+          <div class="card-number">01</div>
+          <div class="card-icon">
+            <svg viewBox="0 0 48 48"><rect x="4" y="8" width="40" height="28" rx="4"/><path d="M16 36l-4 8M32 36l4 8M12 44h24"/><path d="M12 20h8M12 26h16"/><circle cx="36" cy="20" r="4"/></svg>
+          </div>
+          <h3 class="card-title">Custom Landing Pages</h3>
+          <p class="card-desc">Bespoke pages built to convert visitors into appointments. Not templates — strategy-first design that speaks directly to your ideal client.</p>
+          <div class="card-delivers">
+            <p class="card-delivers-label">What you get</p>
+            <ul>
+              <li>Headline testing (3–5 variations)</li>
+              <li>Trust signals: testimonials, certifications, case results</li>
+              <li>Clear CTA above fold + multiple CTAs throughout</li>
+              <li>Mobile-optimized forms with low friction</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="service-card" id="card-2">
+          <div class="card-number">02</div>
+          <div class="card-icon">
+            <svg viewBox="0 0 48 48"><path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4z"/><path d="M24 4c-4 6-6 12-6 20s2 14 6 20M24 4c4 6 6 12 6 20s-2 14-6 20"/><path d="M4 24h40M6 14h36M6 34h36"/></svg>
+          </div>
+          <h3 class="card-title">Paid Ads — Instagram & Facebook</h3>
+          <p class="card-desc">We run targeted campaigns to reach people in your geo-location actively searching for your services.</p>
+          <div class="card-delivers">
+            <p class="card-delivers-label">What you get</p>
+            <ul>
+              <li>Audience targeting by job title, interests, behaviors</li>
+              <li>Ad creative testing (angles, hooks, formats)</li>
+              <li>Lead capture + qualification before they reach you</li>
+              <li>Monthly optimization based on cost-per-lead</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="service-card" id="card-3">
+          <div class="card-number">03</div>
+          <div class="card-icon">
+            <svg viewBox="0 0 48 48"><path d="M40 8H8a4 4 0 00-4 4v20a4 4 0 004 4h12l-2 6h-4v2h20v-2h-4l-2-6h12a4 4 0 004-4V12a4 4 0 00-4-4z"/><circle cx="24" cy="20" r="6"/><path d="M14 30c0-5.5 4.5-8 10-8s10 2.5 10 8"/></svg>
+          </div>
+          <h3 class="card-title">Social Media Management</h3>
+          <p class="card-desc">Your business stays visible and active without you lifting a finger. We handle the calendar, content, and community.</p>
+          <div class="card-delivers">
+            <p class="card-delivers-label">What you get</p>
+            <ul>
+              <li>2–3 posts/week tailored to your niche</li>
+              <li>Community engagement: comments, DMs, replies</li>
+              <li>Content calendar planned 30 days out</li>
+              <li>Monthly performance insights</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="service-card" id="card-4">
+          <div class="card-number">04</div>
+          <div class="card-icon">
+            <svg viewBox="0 0 48 48"><polygon points="24,4 28,16 40,16 30,24 34,36 24,28 14,36 18,24 8,16 20,16"/><circle cx="12" cy="38" r="3"/><circle cx="36" cy="38" r="3"/><line x1="15" y1="38" x2="33" y2="38"/></svg>
+          </div>
+          <h3 class="card-title">AI & UGC-Style Ads</h3>
+          <p class="card-desc">Scroll-stopping ad creative that feels native. AI-generated or user-generated formats that convert because they don't look like ads.</p>
+          <div class="card-delivers">
+            <p class="card-delivers-label">What you get</p>
+            <ul>
+              <li>AI-generated or user-generated ad creative</li>
+              <li>Hook-first copy that stops scrollers cold</li>
+              <li>Audience targeting in front of the right people</li>
+              <li>Split-tested variations for maximum reach</li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /cards-grid -->
+      </div><!-- /cards-section-inner -->
+    </div><!-- /cards-section -->
+  </section>
+
+  <!-- ─── FREE OFFER ─── -->
+  <section id="free-offer">
+    <div class="section-wrap">
+      <div class="offer-header reveal">
+        <p class="section-tag">Free Strategy Call</p>
+        <h2 class="section-headline">Your Business Deserves a Winning<br/>Digital Strategy <em>(Free)</em></h2>
+      </div>
+      <div class="offer-grid reveal-stagger">
+        <div class="offer-card">
+          <p class="offer-time">Landing Page Audit — 5 mins</p>
+          <h3 class="offer-title">Is it converting or leaking?</h3>
+          <ul class="offer-items">
+            <li>Where do visitors drop off?</li>
+            <li>1–3 quick wins you can implement immediately</li>
+            <li>Honest assessment — no fluff</li>
+          </ul>
+        </div>
+        <div class="offer-card">
+          <p class="offer-time">Personalized Strategy — 20 mins</p>
+          <h3 class="offer-title">Your 90-day growth roadmap</h3>
+          <ul class="offer-items">
+            <li>What's your ideal client worth booking?</li>
+            <li>Which channel (ads, social, SEO) works fastest for your niche</li>
+            <li>A concrete 90-day action plan you keep</li>
+          </ul>
+        </div>
+        <div class="offer-card">
+          <p class="offer-time">Gen-Z Headline — 5 mins</p>
+          <h3 class="offer-title">Copy that actually stops scrollers</h3>
+          <ul class="offer-items">
+            <li>One powerful headline + subheading combo</li>
+            <li>Written specifically for your niche</li>
+            <li>Ready to test on ads or your site</li>
+          </ul>
+        </div>
+      </div>
+      <div class="offer-cta-block reveal">
+        <p class="offer-cta-text">Book your free 30-minute strategy call.<br/>No sales pitch. Just honest feedback.</p>
+        <p class="offer-objection">This usually costs $300 — we're giving it free to see if we're a fit.</p>
+        <a href="#" class="offer-btn">
+          Book Your Free Call
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9h12M9 3l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OUTCOMES ─── -->
+  <section id="outcomes">
+    <div class="section-wrap">
+      <div class="outcomes-header reveal">
+        <p class="section-tag">What You Actually Get</p>
+        <h2 class="section-headline">Tangible results on<br/>a real timeline</h2>
+      </div>
+      <div class="outcomes-timeline reveal-stagger">
+        <div class="timeline-col">
+          <div class="timeline-marker">
+            <div class="timeline-dot">30<br/>Days</div>
+            <div class="timeline-label">First<br/>Results</div>
+          </div>
+          <ul class="timeline-items">
+            <li>Launch high-converting landing page</li>
+            <li>First paid ad campaign running</li>
+            <li>Initial lead flow coming in</li>
+          </ul>
+        </div>
+        <div class="timeline-col">
+          <div class="timeline-marker">
+            <div class="timeline-dot">60–90<br/>Days</div>
+            <div class="timeline-label">Real<br/>Momentum</div>
+          </div>
+          <ul class="timeline-items">
+            <li>30–50+ qualified leads per month</li>
+            <li>Booked appointments consistently</li>
+            <li>Landing page conversion rate improving</li>
+          </ul>
+        </div>
+        <div class="timeline-col">
+          <div class="timeline-marker">
+            <div class="timeline-dot">6<br/>Months</div>
+            <div class="timeline-label">Predictable<br/>Growth</div>
+          </div>
+          <ul class="timeline-items">
+            <li>Recurring client flow (predictable)</li>
+            <li>Ads optimized to lowest cost-per-lead</li>
+            <li>Social proof built from client success</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section id="pricing">
+    <div class="section-wrap">
+      <div class="pricing-header reveal">
+        <p class="section-tag">Transparent Pricing</p>
+        <h2 class="section-headline">Pick the plan that<br/>fits where you are</h2>
+      </div>
+      <div class="pricing-grid reveal-stagger">
+        <div class="pricing-card">
+          <p class="pricing-tier">Startup</p>
+          <p class="pricing-price">$500–800</p>
+          <p class="pricing-cadence">One-time</p>
+          <div class="pricing-divider"></div>
+          <p class="pricing-best">Best for testing if this works</p>
+          <ul class="pricing-features">
+            <li>Custom landing page</li>
+            <li>Headline A/B testing setup</li>
+            <li>Trust signal integration</li>
+            <li>Mobile-optimized form</li>
+          </ul>
+        </div>
+        <div class="pricing-card featured">
+          <p class="pricing-tier">Growth</p>
+          <span class="pricing-badge">Most Popular</span>
+          <p class="pricing-price">$1,500–2,000</p>
+          <p class="pricing-cadence">per month · 3-month minimum</p>
+          <div class="pricing-divider"></div>
+          <p class="pricing-best">Best for getting 20–40 leads/month</p>
+          <ul class="pricing-features">
+            <li>Everything in Startup</li>
+            <li>3 months of ad management</li>
+            <li>Instagram &amp; Facebook campaigns</li>
+            <li>Lead capture + qualification</li>
+            <li>Monthly cost-per-lead reporting</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <p class="pricing-tier">Scale</p>
+          <p class="pricing-price">$2,500–3,500</p>
+          <p class="pricing-cadence">per month</p>
+          <div class="pricing-divider"></div>
+          <p class="pricing-best">Best for consistent 50+ leads/month</p>
+          <ul class="pricing-features">
+            <li>Everything in Growth</li>
+            <li>Social media management</li>
+            <li>2–3 posts/week + engagement</li>
+            <li>30-day content calendar</li>
+            <li>Monthly performance insights</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <p class="pricing-tier">Premium</p>
+          <p class="pricing-price">$4,000+</p>
+          <p class="pricing-cadence">per month</p>
+          <div class="pricing-divider"></div>
+          <p class="pricing-best">Best for agencies, high-volume</p>
+          <ul class="pricing-features">
+            <li>Everything in Scale</li>
+            <li>AI &amp; UGC-style ad creative</li>
+            <li>Hook-first ad copy writing</li>
+            <li>Split-tested ad variations</li>
+            <li>Dedicated account manager</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─── -->
+  <section id="faq">
+    <div class="section-wrap">
+      <div class="faq-header reveal">
+        <p class="section-tag">Common Questions</p>
+        <h2 class="section-headline">Straight answers,<br/>no runaround</h2>
+      </div>
+      <div class="faq-cols">
+        <div class="faq-list reveal-left">
+          <div class="faq-item">
+            <div class="faq-question">
+              <span class="faq-q-text">How long until I see results?</span>
+              <span class="faq-icon"><svg viewBox="0 0 12 12" fill="none" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg></span>
+            </div>
+            <div class="faq-answer"><div class="faq-answer-inner">Ads: 2–4 weeks to start seeing traction. Social media: 60–90 days for real momentum. Landing pages impact results from day one of traffic.</div></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <span class="faq-q-text">What if ads don't work for me?</span>
+              <span class="faq-icon"><svg viewBox="0 0 12 12" fill="none" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg></span>
+            </div>
+            <div class="faq-answer"><div class="faq-answer-inner">We optimize aggressively for 60 days. If the ROI isn't there, we pivot the strategy or pause and reassess — you'll never be billed for something that's clearly not working.</div></div>
+          </div>
+        </div>
+        <div class="faq-list reveal-right">
+          <div class="faq-item">
+            <div class="faq-question">
+              <span class="faq-q-text">Do you have long-term contracts?</span>
+              <span class="faq-icon"><svg viewBox="0 0 12 12" fill="none" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg></span>
+            </div>
+            <div class="faq-answer"><div class="faq-answer-inner">Month-to-month after the initial minimum. No lock-in if you're not happy. We'd rather earn your business every month than trap you in a contract.</div></div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              <span class="faq-q-text">Can you work with my existing website?</span>
+              <span class="faq-icon"><svg viewBox="0 0 12 12" fill="none" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg></span>
+            </div>
+            <div class="faq-answer"><div class="faq-answer-inner">Yes. We start with an audit — if it's salvageable we optimize it, if it's hurting your conversions we'll rebuild the landing page section that matters most.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER CTA ─── -->
+  <footer id="footer-cta">
+    <div class="section-wrap">
+      <div class="reveal">
+        <p class="footer-cta-tag">Your Positioning</p>
+        <h2 class="footer-cta-headline">Let's build you<br/>predictable client flow.</h2>
+        <p class="footer-cta-sub">We help businesses get predictable client flow through bespoke landing pages, targeted paid ads, and consistent social presence — without generic templates or vanity metrics.</p>
+        <a href="#" class="offer-btn">Start with a Free Call</a>
+      </div>
+      <div class="footer-meta">
+        <div class="footer-links">
+          <a href="#services">Services</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <p class="footer-copy">© 2025 Week Agency. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+  window.addEventListener('load', function() {
+  (() => {
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+    (function tick(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+    document.querySelectorAll('a,button,.service-card').forEach(el => {
+      el.addEventListener('mouseenter',()=>{ cursor.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.width='58px'; ring.style.height='58px'; });
+      el.addEventListener('mouseleave',()=>{ cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='36px'; ring.style.height='36px'; });
+    });
+    document.querySelectorAll('.service-card').forEach(c => {
+      c.addEventListener('mousemove', e => {
+        const r=c.getBoundingClientRect();
+        c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+        c.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+      });
+    });
+
+    // LOADER EXIT — waits for both GSAP (window.load) and counter (DOMContentLoaded)
+    const loaderEl = document.getElementById('loader');
+    function tryExit() {
+      if (window.__loaderCounterDone) {
+        doExitLoader();
+      } else {
+        setTimeout(tryExit, 50);
+      }
+    }
+    tryExit();
+
+    function doExitLoader() {
+      gsap.to(loaderEl, {
+        opacity: 0,
+        duration: 1.0,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          loaderEl.style.display = 'none';
+          document.body.style.overflow = 'auto';
+          revealHero();
+        }
+      });
+    }
+
+    function revealHero() {
+      const tl = gsap.timeline({defaults:{ease:'power3.out'}});
+      tl.to('#h-eyebrow',{opacity:1,y:0,duration:1.2},0.15)
+        .to('#h-headline',{opacity:1,y:0,duration:1.4},0.4)
+        .to('#h-sub',     {opacity:1,y:0,duration:1.2},0.7)
+        .to('#h-cta',     {opacity:1,y:0,duration:1.0},0.95)
+        .to('#h-scroll',  {opacity:1,    duration:0.9},1.4);
+    }
+
+    // THREE.JS
+    const canvas   = document.getElementById('three-canvas');
+    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    renderer.setSize(innerWidth,innerHeight);
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,100);
+    camera.position.z = 5;
+
+    const COUNT = 3500;
+    const geo   = new THREE.BufferGeometry();
+    const pos   = new Float32Array(COUNT*3);
+    const sz    = new Float32Array(COUNT);
+    for(let i=0;i<COUNT;i++){
+      pos[i*3]   = (Math.random()-0.5)*22;
+      pos[i*3+1] = (Math.random()-0.5)*22;
+      pos[i*3+2] = (Math.random()-0.5)*8;
+      sz[i]      = Math.random()*2+0.4;
+    }
+    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    geo.setAttribute('aSize',   new THREE.BufferAttribute(sz,1));
+
+    const vertSrc = `
+      attribute float aSize;
+      uniform float uTime;
+      uniform vec2 uMouse;
+      varying float vA;
+      void main(){
+        vec3 p=position;
+        p.y += sin(uTime*0.14+p.x*0.4)*0.14;
+        p.x += cos(uTime*0.11+p.z*0.3)*0.08;
+        vec2 toM = p.xy - uMouse*10.0;
+        float d = length(toM);
+        p.xy += normalize(toM)*max(0.0,(1.8-d)*0.08);
+        vec4 mv=modelViewMatrix*vec4(p,1.0);
+        gl_Position=projectionMatrix*mv;
+        gl_PointSize=aSize*(180.0/-mv.z);
+        vA = 0.22+0.22*sin(uTime*0.2+position.x+position.y);
+      }
+    `;
+
+    function makeMat(r,g,b,alpha) {
+      return new THREE.ShaderMaterial({
+        transparent:true,depthWrite:false,
+        uniforms:{uTime:{value:0},uMouse:{value:new THREE.Vector2()}},
+        vertexShader:vertSrc,
+        fragmentShader:`
+          varying float vA;
+          void main(){
+            float d=length(gl_PointCoord-0.5);
+            if(d>0.5) discard;
+            gl_FragColor=vec4(${r},${g},${b},(1.0-d*2.0)*vA*${alpha});
+          }
+        `
+      });
+    }
+
+    const mat1 = makeMat('0.08','0.07','0.05','0.55');
+    const mat2 = makeMat('0.28','0.22','0.78','0.22');
+    const pts1 = new THREE.Points(geo,mat1);
+    const pts2 = new THREE.Points(geo.clone(),mat2);
+    pts2.rotation.z=0.5;
+    scene.add(pts1,pts2);
+
+    let tmx=0,tmy=0;
+    document.addEventListener('mousemove',e=>{tmx=(e.clientX/innerWidth-0.5);tmy=(e.clientY/innerHeight-0.5);});
+
+    const clock = new THREE.Clock();
+    (function render(){
+      requestAnimationFrame(render);
+      const t=clock.getElapsedTime();
+      mat1.uniforms.uTime.value=t;
+      mat2.uniforms.uTime.value=t*0.65;
+      mat1.uniforms.uMouse.value.set(tmx,-tmy);
+      mat2.uniforms.uMouse.value.set(tmx,-tmy);
+      camera.position.x += (tmx*0.2-camera.position.x)*0.02;
+      camera.position.y += (-tmy*0.15-camera.position.y)*0.02;
+      pts1.rotation.y=t*0.007;
+      pts2.rotation.y=t*-0.005;
+      pts2.rotation.x=t*0.004;
+      renderer.render(scene,camera);
+    })();
+
+    window.addEventListener('resize',()=>{
+      camera.aspect=innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth,innerHeight);
+    });
+
+    // SCROLL MOUNTAIN
+    gsap.registerPlugin(ScrollTrigger);
+    const spacer      = document.getElementById('cards-reveal-spacer');
+    const cardsSect   = document.getElementById('cards-section');
+
+    gsap.to(cardsSect,{
+      y: 0,
+      ease:'none',
+      scrollTrigger:{
+        trigger: spacer,
+        start:'top bottom',
+        end:'top top',
+        scrub:2.5,
+      }
+    });
+
+    // HAMBURGER
+    const hb = document.getElementById('hamburger');
+    let open = false;
+    hb.addEventListener('click',()=>{
+      open=!open;
+      document.body.classList.toggle('menu-open',open);
+      hb.setAttribute('aria-expanded',open);
+    });
+    document.querySelectorAll('.menu-inner a').forEach(a=>a.addEventListener('click',()=>{
+      open=false;
+      document.body.classList.remove('menu-open');
+      hb.setAttribute('aria-expanded',false);
+    }));
+
+    // NAVBAR on scroll
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll',()=>{
+      if(scrollY>60){
+        nav.style.cssText='padding:20px 56px;background:rgba(246,242,235,0.88);backdrop-filter:blur(24px);border-bottom:1px solid rgba(10,8,5,0.07);';
+      } else {
+        nav.style.cssText='padding:24px 56px;background:transparent;backdrop-filter:none;border-bottom:none;';
+      }
+    },{passive:true});
+
+    // ── SCROLL REVEAL ANIMATIONS ──
+    const revealCfg = { ease:'power3.out', duration:1.0 };
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      gsap.to(el, { opacity:1, y:0, ...revealCfg,
+        scrollTrigger:{ trigger:el, start:'top 88%', toggleActions:'play none none none' }
+      });
+    });
+
+    document.querySelectorAll('.reveal-left').forEach(el => {
+      gsap.to(el, { opacity:1, x:0, ...revealCfg,
+        scrollTrigger:{ trigger:el, start:'top 88%', toggleActions:'play none none none' }
+      });
+    });
+
+    document.querySelectorAll('.reveal-right').forEach(el => {
+      gsap.to(el, { opacity:1, x:0, ...revealCfg,
+        scrollTrigger:{ trigger:el, start:'top 88%', toggleActions:'play none none none' }
+      });
+    });
+
+    document.querySelectorAll('.reveal-stagger').forEach(parent => {
+      gsap.to(Array.from(parent.children), {
+        opacity:1, y:0, duration:0.9, ease:'power3.out', stagger:0.18,
+        scrollTrigger:{ trigger:parent, start:'top 85%', toggleActions:'play none none none' }
+      });
+    });
+
+    // ── FAQ ACCORDION ──
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+  })();
+  }); // end window.load
+  </script>
+</body>
+</html>
