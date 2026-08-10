@@ -30,7 +30,11 @@
     #cursor-ring { width:36px;height:36px;border:1px solid rgba(90,146,0,0.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s; }
 
     /* NAVBAR */
-    #navbar { position:fixed;top:0;left:0;right:0;z-index:800;padding:24px 56px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s,padding 0.4s; }
+    #navbar { position:fixed;top:0;left:0;right:0;z-index:800;padding:24px 56px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s,padding 0.4s,backdrop-filter 0.4s,border-bottom 0.4s; }
+    #navbar.scrolled { padding:20px 56px;background:rgba(246,242,235,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(10,8,5,0.07); }
+    #navbar.scrolled .nav-logo { color:#0d0b08; }
+    #navbar.scrolled .hb-line { background:#0d0b08; }
+    #navbar.scrolled #hamburger { border-color:rgba(10,8,5,0.09); }
     .nav-logo { font-family:var(--font-h);font-size:22px;font-weight:800;letter-spacing:-0.03em;color:#f6f2eb;text-decoration:none;z-index:801;position:relative;transition:color 0.4s; }
     .nav-logo span { color:var(--accent); }
     #hamburger { width:52px;height:52px;border-radius:50%;border:1px solid rgba(246,242,235,0.18);background:rgba(246,242,235,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:none;z-index:801;position:relative;backdrop-filter:blur(10px);transition:border-color 0.3s,background 0.3s; }
@@ -321,6 +325,47 @@
     .reveal-left  { opacity:0;transform:translateX(-40px); }
     .reveal-right { opacity:0;transform:translateX(40px); }
     .reveal-stagger > * { opacity:0;transform:translateY(36px); }
+
+    /* ── RESPONSIVE STYLES ── */
+    @media (max-width: 1024px) {
+      .about-hero-wrap, .team-wrap, .values-wrap { padding: 0 40px; }
+      .values-grid { grid-template-columns: repeat(2, 1fr); gap: 0; }
+      .value-item:nth-child(3) { border-left: none; border-top: 1px solid rgba(246,242,235,0.06); }
+      .value-item:nth-child(4) { border-top: 1px solid rgba(246,242,235,0.06); }
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 16px 20px; }
+      #navbar.scrolled { padding: 14px 20px; }
+      #hamburger { width: 44px; height: 44px; }
+      .menu-inner { padding: 80px 24px 40px; }
+      .menu-nav a { font-size: clamp(36px, 8vw, 64px); }
+
+      #about-hero { min-height: 70vh; padding-bottom: 60px; justify-content: center; }
+      .about-hero-wrap, .team-wrap, .values-wrap { padding: 0 20px; }
+      .about-hero-headline { font-size: clamp(38px, 9vw, 64px); margin-bottom: 24px; }
+      .about-hero-desc { font-size: 15px; }
+
+      #team { padding: 64px 0 80px; }
+      .team-header { margin-bottom: 40px; text-align: center; }
+      .team-headline { font-size: clamp(28px, 7vw, 44px); }
+      .team-grid { grid-template-columns: 1fr; gap: 20px; }
+      .member-card:first-child, .member-card:last-child { border-radius: 16px; }
+      .member-card { border-radius: 16px; }
+      .member-info { padding: 28px 24px; }
+
+      #values { padding: 64px 0; }
+      .values-grid { grid-template-columns: 1fr; }
+      .value-item { border-left: none !important; border-top: 1px solid rgba(246,242,235,0.06); padding: 32px 0; }
+      .value-item:first-child { border-top: none; }
+
+      .about-footer { padding: 32px 20px; flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      #cursor, #cursor-ring { display: none !important; }
+      body, a, button, .member-card { cursor: auto !important; }
+    }
   </style>
 </head>
 <body>
@@ -379,11 +424,11 @@
         <!-- FOUNDER -->
         <div class="member-card">
           <div class="member-portrait">
-            <img src="founder.jpeg" alt="Founder & CEO" class="member-photo" />
+            <img src="founder.jpeg" alt="Vishal Sarkar" class="member-photo" />
           </div>
           <div class="member-info">
             <p class="member-role">Founder &amp; CEO</p>
-            <h3 class="member-name">TBA</h3>
+            <h3 class="member-name">Vishal Sarkar</h3>
             <p class="member-bio">
               The vision behind Week. Obsessed with conversion strategy,
               brand positioning, and building systems that generate
@@ -518,20 +563,8 @@
 
     // NAVBAR on scroll
     const nav = document.getElementById('navbar');
-    const logo = nav.querySelector('.nav-logo');
-    const hbLines = nav.querySelectorAll('.hb-line');
     window.addEventListener('scroll', () => {
-      if (scrollY > 60) {
-        nav.style.cssText = 'padding:20px 56px;background:rgba(246,242,235,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(10,8,5,0.07);';
-        logo.style.color = '#0d0b08';
-        hbLines.forEach(l => l.style.background = '#0d0b08');
-        nav.querySelector('#hamburger').style.borderColor = 'rgba(10,8,5,0.09)';
-      } else {
-        nav.style.cssText = 'padding:24px 56px;background:transparent;backdrop-filter:none;border-bottom:none;';
-        logo.style.color = '#f6f2eb';
-        hbLines.forEach(l => l.style.background = '#f6f2eb');
-        nav.querySelector('#hamburger').style.borderColor = 'rgba(246,242,235,0.18)';
-      }
+      nav.classList.toggle('scrolled', window.scrollY > 60);
     }, {passive:true});
 
     // HAMBURGER
