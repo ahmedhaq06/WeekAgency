@@ -472,44 +472,53 @@
       text-align: left;
     }
 
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     .hero-cta {
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 16px 36px;
-      background: var(--text);
-      color: var(--bg);
+      padding: 16px 32px;
       font-family: var(--font-h);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       text-decoration: none;
       border-radius: 100px;
       cursor: none;
       opacity: 0;
       transform: translateY(20px);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s, border-color 0.3s;
       position: relative;
       overflow: hidden;
     }
 
-    .hero-cta::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.12);
-      transform: translateX(-101%);
-      transition: transform 0.4s ease;
+    .hero-phone-cta {
+      background: var(--text);
+      color: var(--bg);
     }
 
-    .hero-cta:hover::before {
-      transform: translateX(0);
-    }
-
-    .hero-cta:hover {
+    .hero-phone-cta:hover {
       transform: translateY(-3px);
-      box-shadow: 0 20px 60px rgba(13, 11, 8, 0.15);
+      box-shadow: 0 20px 60px rgba(13, 11, 8, 0.2);
+    }
+
+    .hero-work-cta {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .hero-work-cta:hover {
+      border-color: var(--text);
+      background: rgba(13, 11, 8, 0.05);
+      transform: translateY(-3px);
     }
 
     .cta-arrow {
@@ -1521,6 +1530,18 @@
         text-align: center;
       }
 
+      .hero-cta-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .hero-cta {
+        width: 100%;
+        justify-content: center;
+      }
+
       .hero-eyebrow {
         justify-content: center;
       }
@@ -1760,15 +1781,20 @@
             run paid ads, and manage your socials — so you get real
             appointments, not just impressions.
           </p>
-          <a href="#services" class="hero-cta" id="h-cta">
-            See our work
-            <span class="cta-arrow">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round">
-                <path d="M3 9h12M9 3l6 6-6 6" />
-              </svg>
-            </span>
-          </a>
+          <div class="hero-cta-group">
+            <a href="tel:+916301148026" class="hero-cta hero-phone-cta" id="h-phone-cta">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Call +91 63011 48026
+            </a>
+            <a href="#services" class="hero-cta hero-work-cta" id="h-cta">
+              See our work
+              <span class="cta-arrow">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M3 9h12M9 3l6 6-6 6" />
+                </svg>
+              </span>
+            </a>
+          </div>
         </div>
       </div>
       <div class="hero-scroll-hint" id="h-scroll">
@@ -2226,7 +2252,8 @@
           tl.to('#h-eyebrow', { opacity: 1, y: 0, duration: 1.2 }, 0.15)
             .to('#h-headline', { opacity: 1, y: 0, duration: 1.4 }, 0.4)
             .to('#h-sub', { opacity: 1, y: 0, duration: 1.2 }, 0.7)
-            .to('#h-cta', { opacity: 1, y: 0, duration: 1.0 }, 0.95)
+            .to('#h-phone-cta', { opacity: 1, y: 0, duration: 1.0 }, 0.9)
+            .to('#h-cta', { opacity: 1, y: 0, duration: 1.0 }, 1.05)
             .to('#h-scroll', { opacity: 1, duration: 0.9 }, 1.4);
         }
 
