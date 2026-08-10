@@ -586,7 +586,7 @@
     #services,
     #free-offer,
     #outcomes,
-    #pricing,
+    #quote,
     #faq,
     #footer-cta {
       position: relative;
@@ -1033,142 +1033,233 @@
       font-weight: 600;
     }
 
-    /* ── PRICING ── */
-    #pricing {
+    /* ── GENERATE QUOTE ── */
+    #quote {
       background: var(--surface);
       padding: 120px 0;
+      border-top: 1px solid var(--border);
     }
 
-    .pricing-header {
-      margin-bottom: 72px;
+    .quote-header {
+      margin-bottom: 56px;
     }
 
-    .pricing-grid {
+    .quote-box {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 56px 48px;
+      border: 1px solid var(--border);
+    }
+
+    .quote-step-label {
+      font-family: var(--font-h);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .quote-services-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
 
-    .pricing-card {
-      background: var(--card-bg);
-      padding: 44px 36px;
-      border-radius: 16px;
+    .quote-service-card {
       position: relative;
-      transition: transform 0.35s, box-shadow 0.35s;
       cursor: none;
+      user-select: none;
     }
 
-    .pricing-card.featured {
-      background: var(--text);
+    .quote-service-card input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .pricing-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 28px 64px rgba(13, 11, 8, 0.1);
+    .quote-card-content {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
     }
 
-    .pricing-card.featured:hover {
-      box-shadow: 0 28px 64px rgba(13, 11, 8, 0.3);
+    .quote-service-card:hover .quote-card-content {
+      border-color: rgba(90, 146, 0, 0.4);
+      transform: translateY(-3px);
     }
 
-    .pricing-tier {
-      font-family: var(--font-h);
+    .quote-service-card input:checked+.quote-card-content {
+      border-color: var(--accent);
+      background: #ede9e1;
+      box-shadow: 0 8px 24px rgba(90, 146, 0, 0.12);
+    }
+
+    .quote-check-icon {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
+      color: transparent;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .quote-service-card input:checked+.quote-card-content .quote-check-icon {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #f6f2eb;
+    }
+
+    .quote-service-icon {
+      font-size: 28px;
       margin-bottom: 16px;
     }
 
-    .pricing-card.featured .pricing-tier {
-      color: rgba(246, 242, 235, 0.45);
-    }
-
-    .pricing-badge {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      background: var(--accent);
-      color: #f6f2eb;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 14px;
-    }
-
-    .pricing-price {
+    .quote-service-title {
       font-family: var(--font-h);
-      font-size: clamp(26px, 3vw, 40px);
-      font-weight: 800;
-      letter-spacing: -0.04em;
+      font-size: 17px;
+      font-weight: 700;
       color: var(--text);
-      margin-bottom: 4px;
-      line-height: 1;
+      margin-bottom: 8px;
+      line-height: 1.2;
     }
 
-    .pricing-card.featured .pricing-price {
-      color: #f6f2eb;
+    .quote-service-sub {
+      font-size: 12.5px;
+      color: rgba(13, 11, 8, 0.52);
+      line-height: 1.5;
     }
 
-    .pricing-cadence {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 28px;
+    .quote-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
 
-    .pricing-card.featured .pricing-cadence {
-      color: rgba(246, 242, 235, 0.4);
+    .quote-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    .pricing-divider {
-      height: 1px;
-      background: var(--border);
-      margin-bottom: 24px;
+    .quote-input-group .input-icon {
+      position: absolute;
+      left: 20px;
+      font-size: 16px;
+      pointer-events: none;
     }
 
-    .pricing-card.featured .pricing-divider {
-      background: rgba(246, 242, 235, 0.08);
+    .quote-input-group input {
+      width: 100%;
+      padding: 18px 20px 18px 52px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-family: var(--font-b);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .pricing-best {
-      font-size: 11px;
-      color: var(--muted);
-      font-style: italic;
-      margin-bottom: 20px;
+    .quote-input-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(90, 146, 0, 0.1);
     }
 
-    .pricing-card.featured .pricing-best {
-      color: rgba(246, 242, 235, 0.4);
+    .quote-action-bar {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
 
-    .pricing-features {
-      list-style: none;
+    .quote-est-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 4px;
     }
 
-    .pricing-features li {
-      font-size: 13px;
-      color: rgba(13, 11, 8, 0.52);
-      font-weight: 300;
-      padding-left: 18px;
-      position: relative;
-      line-height: 1.45;
-    }
-
-    .pricing-card.featured .pricing-features li {
-      color: rgba(246, 242, 235, 0.55);
-    }
-
-    .pricing-features li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--accent);
+    .est-label {
       font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .est-amount {
+      font-family: var(--font-h);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .quote-submit-btn {
+      border: none;
+    }
+
+    .quote-success-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .success-icon-badge {
+      width: 64px;
+      height: 64px;
+      background: rgba(90, 146, 0, 0.12);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 auto 24px;
+    }
+
+    .success-title {
+      font-family: var(--font-h);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .success-desc {
+      font-size: 15px;
+      color: rgba(13, 11, 8, 0.6);
+      max-width: 520px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+
+    .success-call-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 32px;
+      display: inline-block;
     }
 
     /* ── FAQ ── */
@@ -1380,7 +1471,7 @@
         padding: 0 40px;
       }
 
-      .pricing-grid {
+      .quote-services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
       }
@@ -1468,7 +1559,7 @@
 
       #free-offer,
       #outcomes,
-      #pricing,
+      #quote,
       #faq,
       #footer-cta {
         padding: 64px 0;
@@ -1485,7 +1576,7 @@
 
       .offer-header,
       .outcomes-header,
-      .pricing-header,
+      .quote-header,
       .faq-header {
         margin-bottom: 40px;
         text-align: center;
@@ -1517,13 +1608,30 @@
         display: none;
       }
 
-      .pricing-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+      .quote-box {
+        padding: 32px 20px;
+        border-radius: 16px;
       }
 
-      .pricing-card {
-        padding: 32px 24px;
+      .quote-services-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .quote-inputs-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .quote-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+
+      .quote-submit-btn {
+        width: 100%;
+        justify-content: center;
       }
 
       .faq-cols {
@@ -1879,70 +1987,103 @@
     </div>
   </section>
 
-  <!-- ─── PRICING ─── -->
-  <section id="pricing">
+  <!-- ─── GENERATE QUOTE ─── -->
+  <section id="quote">
     <div class="section-wrap">
-      <div class="pricing-header reveal">
-        <p class="section-tag">Transparent Pricing</p>
-        <h2 class="section-headline">Pick the plan that<br />fits where you are</h2>
+      <div class="quote-header reveal">
+        <p class="section-tag">Custom Estimate</p>
+        <h2 class="section-headline">Generate your custom<br />growth quote</h2>
       </div>
-      <div class="pricing-grid reveal-stagger">
-        <div class="pricing-card">
-          <p class="pricing-tier">Startup</p>
-          <p class="pricing-price">$500–800</p>
-          <p class="pricing-cadence">One-time</p>
-          <div class="pricing-divider"></div>
-          <p class="pricing-best">Best for testing if this works</p>
-          <ul class="pricing-features">
-            <li>Custom landing page</li>
-            <li>Headline A/B testing setup</li>
-            <li>Trust signal integration</li>
-            <li>Mobile-optimized form</li>
-          </ul>
+      <div class="quote-box reveal">
+        <form id="quote-form" onsubmit="event.preventDefault(); submitQuote();">
+          
+          <!-- Step 1: Services Selection -->
+          <div class="quote-step">
+            <label class="quote-step-label">1. Select the services you need</label>
+            <div class="quote-services-grid">
+              <label class="quote-service-card">
+                <input type="checkbox" name="services" value="Custom Landing Pages" checked onchange="updateQuoteEst()" />
+                <div class="quote-card-content">
+                  <div class="quote-check-icon">✓</div>
+                  <div class="quote-service-icon">⚡</div>
+                  <h4 class="quote-service-title">Custom Landing Pages</h4>
+                  <p class="quote-service-sub">Bespoke, high-converting design</p>
+                </div>
+              </label>
+              
+              <label class="quote-service-card">
+                <input type="checkbox" name="services" value="Paid Ads — IG & FB" onchange="updateQuoteEst()" />
+                <div class="quote-card-content">
+                  <div class="quote-check-icon">✓</div>
+                  <div class="quote-service-icon">🎯</div>
+                  <h4 class="quote-service-title">Paid Ads (IG &amp; FB)</h4>
+                  <p class="quote-service-sub">Geo-targeted lead generation</p>
+                </div>
+              </label>
+              
+              <label class="quote-service-card">
+                <input type="checkbox" name="services" value="Social Media Management" onchange="updateQuoteEst()" />
+                <div class="quote-card-content">
+                  <div class="quote-check-icon">✓</div>
+                  <div class="quote-service-icon">📱</div>
+                  <h4 class="quote-service-title">Social Media Management</h4>
+                  <p class="quote-service-sub">30-day content &amp; engagement</p>
+                </div>
+              </label>
+              
+              <label class="quote-service-card">
+                <input type="checkbox" name="services" value="AI & UGC-Style Ads" onchange="updateQuoteEst()" />
+                <div class="quote-card-content">
+                  <div class="quote-check-icon">✓</div>
+                  <div class="quote-service-icon">🎬</div>
+                  <h4 class="quote-service-title">AI &amp; UGC-Style Ads</h4>
+                  <p class="quote-service-sub">Native scroll-stopping creative</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 2: Contact Details -->
+          <div class="quote-step" style="margin-top: 40px;">
+            <label class="quote-step-label">2. Enter your details for instant quote delivery</label>
+            <div class="quote-inputs-grid">
+              <div class="quote-input-group">
+                <span class="input-icon">📱</span>
+                <input type="tel" id="quote-phone" placeholder="Phone / WhatsApp (e.g. +91 63011 48026)" required />
+              </div>
+              <div class="quote-input-group">
+                <span class="input-icon">✉️</span>
+                <input type="email" id="quote-email" placeholder="Work Email Address" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Estimate Summary & Submit -->
+          <div class="quote-action-bar">
+            <div class="quote-est-box">
+              <span class="est-label">Estimated Budget:</span>
+              <span class="est-amount" id="quote-est-val">$500 – $800</span>
+            </div>
+            <button type="submit" class="offer-btn quote-submit-btn">
+              Generate Quote &amp; Request Call
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9h12M9 3l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Message State -->
+        <div id="quote-success" class="quote-success-state" style="display:none;">
+          <div class="success-icon-badge">✓</div>
+          <h3 class="success-title">Quote Request Received!</h3>
+          <p class="success-desc">
+            We've calculated your custom growth package based on your selected services. Our Founder <strong>Vishal Sarkar</strong> will connect with you via phone/WhatsApp shortly.
+          </p>
+          <div class="success-call-box">
+            <p style="font-size:14px;color:var(--text);font-weight:600;margin-bottom:8px;">Want immediate feedback on your strategy?</p>
+            <a href="tel:+916301148026" class="offer-btn">Call Vishal directly: +91 63011 48026</a>
+          </div>
         </div>
-        <div class="pricing-card featured">
-          <p class="pricing-tier">Growth</p>
-          <span class="pricing-badge">Most Popular</span>
-          <p class="pricing-price">$1,500–2,000</p>
-          <p class="pricing-cadence">per month · 3-month minimum</p>
-          <div class="pricing-divider"></div>
-          <p class="pricing-best">Best for getting 20–40 leads/month</p>
-          <ul class="pricing-features">
-            <li>Everything in Startup</li>
-            <li>3 months of ad management</li>
-            <li>Instagram &amp; Facebook campaigns</li>
-            <li>Lead capture + qualification</li>
-            <li>Monthly cost-per-lead reporting</li>
-          </ul>
-        </div>
-        <div class="pricing-card">
-          <p class="pricing-tier">Scale</p>
-          <p class="pricing-price">$2,500–3,500</p>
-          <p class="pricing-cadence">per month</p>
-          <div class="pricing-divider"></div>
-          <p class="pricing-best">Best for consistent 50+ leads/month</p>
-          <ul class="pricing-features">
-            <li>Everything in Growth</li>
-            <li>Social media management</li>
-            <li>2–3 posts/week + engagement</li>
-            <li>30-day content calendar</li>
-            <li>Monthly performance insights</li>
-          </ul>
-        </div>
-        <div class="pricing-card">
-          <p class="pricing-tier">Premium</p>
-          <p class="pricing-price">$4,000+</p>
-          <p class="pricing-cadence">per month</p>
-          <div class="pricing-divider"></div>
-          <p class="pricing-best">Best for agencies, high-volume</p>
-          <ul class="pricing-features">
-            <li>Everything in Scale</li>
-            <li>AI &amp; UGC-style ad creative</li>
-            <li>Hook-first ad copy writing</li>
-            <li>Split-tested ad variations</li>
-            <li>Dedicated account manager</li>
-          </ul>
-        </div>
+
       </div>
     </div>
   </section>
@@ -2024,7 +2165,7 @@
       <div class="footer-meta">
         <div class="footer-links">
           <a href="#services">Services</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#quote">Quote</a>
           <a href="#faq">FAQ</a>
         </div>
         <p class="footer-copy">© 2025 Week Agency. All rights reserved.</p>
@@ -2257,6 +2398,37 @@
 
       })();
     }); // end window.load
+
+    // ── QUOTE CALCULATOR & FORM ──
+    function updateQuoteEst() {
+      const selected = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(i => i.value);
+      const estVal = document.getElementById('quote-est-val');
+      if (!estVal) return;
+
+      if (selected.length === 0) {
+        estVal.textContent = "Select at least 1 service";
+      } else if (selected.length === 1) {
+        if (selected[0].includes("Landing")) estVal.textContent = "$500 – $800";
+        else if (selected[0].includes("Paid Ads")) estVal.textContent = "$1,200 – $1,800/mo";
+        else if (selected[0].includes("Social")) estVal.textContent = "$800 – $1,200/mo";
+        else estVal.textContent = "$1,000 – $1,500/mo";
+      } else if (selected.length === 2) {
+        estVal.textContent = "$1,500 – $2,500/mo";
+      } else if (selected.length === 3) {
+        estVal.textContent = "$2,500 – $3,800/mo";
+      } else {
+        estVal.textContent = "$4,000+ /mo (Full Growth Suite)";
+      }
+    }
+
+    function submitQuote() {
+      const phone = document.getElementById('quote-phone').value;
+      const email = document.getElementById('quote-email').value;
+      if (!phone || !email) return;
+
+      document.getElementById('quote-form').style.display = 'none';
+      document.getElementById('quote-success').style.display = 'block';
+    }
   </script>
 </body>
 
